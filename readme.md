@@ -31,3 +31,9 @@ To run
 ```bash
 npx gitlab-labeler
 ```
+
+## Configuration
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE.md](LICENSE) file for more information.

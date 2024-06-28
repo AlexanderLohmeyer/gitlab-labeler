@@ -1,7 +1,5 @@
-import axios from "axios";
-import { labelerConfig } from "../config/get-config";
-import { getApiBaseUrl } from "./get-api-base-url";
-import { gitlabHeaders } from "./gitlab-headers";
+import { getConfig } from "../config/get-config";
+import { gitlabApi } from "./main";
 
 type ListMergeRequestDiffsResponse = {
   old_path: string;
@@ -17,12 +15,11 @@ export async function fetchChangedFiles(
   page: number,
   limit: number
 ): Promise<ChangedFilesResponse> {
-  const response = await axios.get<ListMergeRequestDiffsResponse>(
-    `${getApiBaseUrl()}/projects/${
-      labelerConfig.mergeRequestProjectId
-    }/merge_requests/${labelerConfig.mergeRequestIID}/diffs`,
+  const response = await gitlabApi.get<ListMergeRequestDiffsResponse>(
+    `/projects/${getConfig().mergeRequestProjectId}/merge_requests/${
+      getConfig().mergeRequestIID
+    }/diffs`,
     {
-      headers: gitlabHeaders,
       params: {
         per_page: limit,
         page,

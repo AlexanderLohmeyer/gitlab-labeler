@@ -9,7 +9,6 @@ export function getLabelsToAssign(
   changes: string[],
   labelDirectories: DirectoriesLabelMapping[]
 ): LabelMatch[] {
-  console.log("check for labels", labelDirectories);
   const labelMatches = labelDirectories
     .map((testDir) => {
       const match = changes.find((changedFile) => testDir[0].test(changedFile));

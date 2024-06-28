@@ -3,6 +3,8 @@ export type DirectoriesLabelMapping = [RegExp, string];
 export interface LabelerConfig {
   detectChanges?: "git" | "gitlab-api";
   directoriesLabels?: DirectoriesLabelMapping[];
+  silence?: boolean;
+  writeComment?: boolean;
 }
 
 export interface GitlabEnvVariables {

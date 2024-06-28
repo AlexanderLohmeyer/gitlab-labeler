@@ -1,14 +1,11 @@
-import axios from "axios";
-import { labelerConfig } from "../config/get-config";
-import { getApiBaseUrl } from "./get-api-base-url";
-import { gitlabHeaders } from "./gitlab-headers";
+import { getConfig } from "../config/get-config";
+import { gitlabApi } from "./main";
 
 export async function assignLabels(labels: string[]) {
-  return await axios.put(
-    `${getApiBaseUrl()}/projects/${
-      labelerConfig.mergeRequestProjectId
-    }/merge_requests/${labelerConfig.mergeRequestIID}`,
-    { add_labels: labels.join(",") },
-    { headers: gitlabHeaders }
+  return await gitlabApi.put(
+    `projects/${getConfig().mergeRequestProjectId}/merge_requests/${
+      getConfig().mergeRequestIID
+    }`,
+    { add_labels: labels.join(",") }
   );
 }

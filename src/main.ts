@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import { labelerConfig } from "./config/get-config";
+import { getConfig } from "./config/get-config";
 import { Labeler } from "./labeler";
+import { logger } from "./logger";
 
 export async function run(): Promise<void> {
-  const labeler = new Labeler(labelerConfig.directoriesLabels);
-  labeler.start();
+  logger.log(`─────────────────────Gitlab Labeler─────────────────────────`);
 
-  // const test3 = getTagsToAssign(test2);
-  // console.log(test3);
+  const labeler = new Labeler(getConfig().directoriesLabels);
+  labeler.start();
 }
 
 run();

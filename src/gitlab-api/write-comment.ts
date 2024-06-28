@@ -1,18 +1,11 @@
-import axios from "axios";
-import { labelerConfig } from "../config/get-config";
-import { getApiBaseUrl } from "./get-api-base-url";
-import { gitlabHeaders } from "./gitlab-headers";
+import { getConfig } from "../config/get-config";
+import { gitlabApi } from "./main";
 
 export async function writeComment(comment: string) {
-  await axios.post(
-    `${getApiBaseUrl()}/projects/${
-      labelerConfig.mergeRequestProjectId
-    }/merge_requests/${labelerConfig.mergeRequestIID}/notes`,
-    {
-      body: comment,
-    },
-    {
-      headers: gitlabHeaders,
-    }
+  return gitlabApi.post(
+    `/projects/${getConfig().mergeRequestProjectId}/merge_requests/${
+      getConfig().mergeRequestIID
+    }/notes`,
+    { body: comment }
   );
 }

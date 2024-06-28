@@ -1,5 +1,5 @@
 import { DirectoriesLabelMapping } from "./config";
-import { labelerConfig } from "./config/get-config";
+import { getConfig } from "./config/get-config";
 import { LabelMatch, getLabelsToAssign } from "./get-labels-to-assign";
 import { getChangedFiles } from "./git/get-changed-files";
 import { assignLabels } from "./gitlab-api/assign-labels";
@@ -8,6 +8,7 @@ import {
   fetchChangedFiles,
 } from "./gitlab-api/fetch-changed-files";
 import { writeComment } from "./gitlab-api/write-comment";
+import { logger } from "./logger";
 import { BASE_TEMPLATE } from "./md_templates/base";
 import { CHANGE_ENTRY_TEMPLATE } from "./md_templates/change-entry";
 import { LIST_CHANGES_TEMPLATE } from "./md_templates/list_changes";
@@ -22,7 +23,7 @@ export class Labeler {
   constructor(private labels: DirectoriesLabelMapping[]) {}
 
   get config() {
-    return labelerConfig;
+    return getConfig();
   }
 
   public async start() {
@@ -56,12 +57,21 @@ export class Labeler {
       isComplete = changesResponse.isComplete;
     }
 
-    console.log(labelsToApply);
     if (labelsToApply.length > 0) {
+      logger.log("Applying Labels: " + labelsToApply.join(", "));
       await assignLabels(labelsToApply);
-      const comment = this.getComment(files);
-      await writeComment(comment);
-      console.log(comment);
+
+      if (this.config.writeComment) {
+        logger.log("Writing Comment");
+        try {
+          await writeComment(this.getComment(files));
+          logger.log("Writing Comment succeeded");
+        } catch (e) {
+          logger.error("Writing Comment failed", e);
+        }
+      }
+    } else {
+      logger.log("No Labels to Apply");
     }
   }
 

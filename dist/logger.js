@@ -4,7 +4,7 @@ exports.logger = void 0;
 const get_config_1 = require("./config/get-config");
 exports.logger = {
     log: (message, ...args) => {
-        if (!(0, get_config_1.getConfig)().silence) {
+        if (!(0, get_config_1.getConfigByKey)("silence")) {
             console.log(`\x1b[32m${message}\x1b[0m`, ...args);
         }
     },

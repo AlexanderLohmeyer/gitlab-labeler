@@ -1,21 +1,30 @@
 import { DirectoriesLabelMapping } from "./config";
 
-export interface LabelMatch {
+export interface LabelerMatch {
   fileDir: string;
-  label: string;
+  labels: string[];
+  regExp: RegExp;
 }
 
 export function getLabelsToAssign(
   changes: string[],
   labelDirectories: DirectoriesLabelMapping[]
-): LabelMatch[] {
+): LabelerMatch[] {
   const labelMatches = labelDirectories
     .map((testDir) => {
-      const match = changes.find((changedFile) => testDir[0].test(changedFile));
-      return match ? { fileDir: match, label: testDir[1] } : undefined;
+      const match = changes.find((changedFile) =>
+        testDir.regExp.test(changedFile)
+      );
+      return match
+        ? {
+            fileDir: match,
+            labels: testDir.labelsToAdd,
+            regExp: testDir.regExp,
+          }
+        : undefined;
     })
     .filter(
-      (labelMatch: LabelMatch | undefined): labelMatch is LabelMatch =>
+      (labelMatch: LabelerMatch | undefined): labelMatch is LabelerMatch =>
         !!labelMatch
     );
 

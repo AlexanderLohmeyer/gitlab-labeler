@@ -18,8 +18,8 @@ You can easily define label-directory Matches by creating file named`labeler.con
 module.exports = {
   directoriesLabels: [
     {
-      directory: "path/to/your/directory",
-      label: "your-label",
+      regExp: "\path\/to\/your\/directory\g",
+      label: [ "your-label" ],
     },
     // Add more directory-label pairs as needed
   ],

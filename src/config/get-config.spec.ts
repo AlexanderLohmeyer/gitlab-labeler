@@ -32,6 +32,8 @@ describe("getConfig", () => {
         [/([1]).*/g, "Dir 1"],
         [/^package.json$/g, "Dependencies"],
       ],
+      silence: false,
+      writeComment: true,
     };
 
     const result = getConfig();

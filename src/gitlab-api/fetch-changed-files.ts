@@ -1,4 +1,4 @@
-import { getConfig } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-config";
 import { gitlabApi } from "./main";
 
 type ListMergeRequestDiffsResponse = {
@@ -16,8 +16,8 @@ export async function fetchChangedFiles(
   limit: number
 ): Promise<ChangedFilesResponse> {
   const response = await gitlabApi.get<ListMergeRequestDiffsResponse>(
-    `/projects/${getConfig().mergeRequestProjectId}/merge_requests/${
-      getConfig().mergeRequestIID
+    `/projects/${getGitlabEnv().mergeRequestProjectId}/merge_requests/${
+      getGitlabEnv().mergeRequestIID
     }/diffs`,
     {
       params: {

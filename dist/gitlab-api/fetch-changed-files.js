@@ -9,12 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.assignLabels = void 0;
+exports.fetchChangedFiles = void 0;
 const get_config_1 = require("../config/get-config");
 const main_1 = require("./main");
-function assignLabels(labels) {
+function fetchChangedFiles(page, limit) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield main_1.gitlabApi.put(`projects/${(0, get_config_1.getConfig)().mergeRequestProjectId}/merge_requests/${(0, get_config_1.getConfig)().mergeRequestIID}`, { add_labels: labels.join(",") });
+        const response = yield main_1.gitlabApi.get(`/projects/${(0, get_config_1.getGitlabEnv)().mergeRequestProjectId}/merge_requests/${(0, get_config_1.getGitlabEnv)().mergeRequestIID}/diffs`, {
+            params: {
+                per_page: limit,
+                page,
+            },
+        });
+        const files = response.data.flatMap((data) => data.new_path === data.old_path
+            ? data.new_path
+            : [data.old_path, data.new_path]);
+        const isComplete = !response.headers["x-next-page"]; // Gitlab returns empty string if no next page is available
+        return {
+            files,
+            isComplete,
+        };
     });
 }
-exports.assignLabels = assignLabels;
+exports.fetchChangedFiles = fetchChangedFiles;

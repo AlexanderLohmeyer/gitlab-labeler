@@ -1,12 +1,12 @@
 import path from "path";
 import {
-  FullConfig,
+  DirectoriesLabelMapping,
   GitlabEnvVariables,
   LabelerConfig,
 } from "./config.interface";
 import { defaultConfig } from "./default-config";
 
-function getGitlabEnv(): GitlabEnvVariables {
+export function getGitlabEnv(): GitlabEnvVariables {
   if (!process.env.GITLAB_ACCESS_TOKEN) {
     throw new Error(
       "Gitlab access token not set. Set GITLAB_ACCESS_TOKEN environment variable."
@@ -28,32 +28,64 @@ function getGitlabEnv(): GitlabEnvVariables {
   };
 }
 
-export function getConfigFromFile(): LabelerConfig {
-  let configFromFile: LabelerConfig = {};
-  try {
-    configFromFile = require(path.resolve("./labeler-config.js"));
-  } catch (e) {}
+const camelCaseToSnakeCase = (str: string) =>
+  str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
-  const configFromEnv: LabelerConfig = {
-    silence: process.env.LABELER_SILENCE === "true",
-    writeComment: process.env.LABELER_WRITE_COMMENT === "true",
-    ...(process.env.LABELER_DETECT_CHANGES
-      ? {
-          detectChanges: process.env.LABELER_DETECT_CHANGES as
-            | "git"
-            | "gitlab-api",
-        }
-      : {}),
-  };
+const configFromFile: LabelerConfig = require(path.resolve(
+  "./labeler-config.js"
+));
 
-  return {
-    ...configFromFile,
-    ...configFromEnv,
-  };
+const getConfigPropFromEnv = (key: keyof LabelerConfig): any => {
+  const value =
+    process.env[`LABELER_${camelCaseToSnakeCase(key).toUpperCase()}`];
+
+  if (value === undefined) {
+    return undefined;
+  }
+
+  let output: any;
+
+  switch (typeof defaultConfig[key]) {
+    case "number":
+      output = +value;
+      break;
+    case "boolean":
+      output = value === "true";
+      break;
+    case "object":
+      output = JSON.parse(value);
+      break;
+    default:
+      output = value;
+  }
+
+  if (key === "directoriesLabels") {
+    output = output.map(
+      (item: {
+        regExp: string;
+        labelsToAdd: string[];
+      }): DirectoriesLabelMapping => {
+        return {
+          regExp: stringToRegex(item.regExp),
+          labelsToAdd: item.labelsToAdd,
+        };
+      }
+    );
+  }
+
+  return output;
+};
+
+export const getConfigByKey = (key: keyof LabelerConfig) => {
+  return getConfigPropFromEnv(key) ?? configFromFile[key] ?? defaultConfig[key];
+};
+
+function stringToRegex(regexString: string) {
+  const regexParts = regexString.match(/^\/(.*?)\/([gimsuy]*)$/);
+
+  if (!regexParts) {
+    throw new Error("Invalid regular expression string format");
+  }
+
+  return new RegExp(regexParts[1], regexParts[2]);
 }
-
-export const getConfig = (): Required<FullConfig> => ({
-  ...defaultConfig,
-  ...getConfigFromFile(),
-  ...getGitlabEnv(),
-});

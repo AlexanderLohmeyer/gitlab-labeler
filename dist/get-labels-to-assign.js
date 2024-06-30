@@ -4,8 +4,14 @@ exports.getLabelsToAssign = void 0;
 function getLabelsToAssign(changes, labelDirectories) {
     const labelMatches = labelDirectories
         .map((testDir) => {
-        const match = changes.find((changedFile) => testDir[0].test(changedFile));
-        return match ? { fileDir: match, label: testDir[1] } : undefined;
+        const match = changes.find((changedFile) => testDir.regExp.test(changedFile));
+        return match
+            ? {
+                fileDir: match,
+                labels: testDir.labelsToAdd,
+                regExp: testDir.regExp,
+            }
+            : undefined;
     })
         .filter((labelMatch) => !!labelMatch);
     return labelMatches;

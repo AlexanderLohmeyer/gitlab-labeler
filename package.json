@@ -2,8 +2,8 @@
   "name": "mr-labeler",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/src/main.js",
-  "bin": "dist/src/main.js",
+  "main": "dist/main.js",
+  "bin": "dist/main.js",
   "scripts": {
     "test": "jest"
   },
@@ -16,7 +16,8 @@
     "axios": "^1.7.2",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.7",

@@ -26,11 +26,8 @@ class Labeler {
         this.labels = labels;
         this.labelMatches = [];
     }
-    get config() {
-        return (0, get_config_1.getConfig)();
-    }
     start() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, arguments, void 0, function* (dryRun = false) {
             let labelsToApply = [];
             let isComplete = false;
             let files = [];
@@ -41,26 +38,30 @@ class Labeler {
                     const labelMatches = (0, get_labels_to_assign_1.getLabelsToAssign)(changesResponse.files, this.labels);
                     this.labelMatches = [...this.labelMatches, ...labelMatches];
                     // No need to check already found Labels again
-                    this.labels = this.labels.filter((label) => !labelMatches.find((labelMatch) => labelMatch.label === label[1]));
+                    this.labels = this.labels.filter((label) => !labelMatches.find((labelMatch) => labelMatch.regExp === label.regExp));
                     labelsToApply = [
                         ...labelsToApply,
-                        ...labelMatches.map((labelMatch) => labelMatch.label),
+                        ...labelMatches.flatMap((labelMatch) => labelMatch.labels),
                     ];
                 }
                 isComplete = changesResponse.isComplete;
             }
             if (labelsToApply.length > 0) {
+                labelsToApply = [...new Set(labelsToApply)];
                 logger_1.logger.log("Applying Labels: " + labelsToApply.join(", "));
-                yield (0, assign_labels_1.assignLabels)(labelsToApply);
-                if (this.config.writeComment) {
-                    logger_1.logger.log("Writing Comment");
+                !dryRun && (yield (0, assign_labels_1.assignLabels)(labelsToApply));
+                if ((0, get_config_1.getConfigByKey)("writeComment")) {
+                    logger_1.logger.log("Writing Comment to Gitlab");
                     try {
-                        yield (0, write_comment_1.writeComment)(this.getComment(files));
+                        !dryRun && (yield (0, write_comment_1.writeComment)(this.getComment(files)));
                         logger_1.logger.log("Writing Comment succeeded");
                     }
                     catch (e) {
                         logger_1.logger.error("Writing Comment failed", e);
                     }
+                }
+                else {
+                    logger_1.logger.log("Skip Gitlab Comment");
                 }
             }
             else {
@@ -70,9 +71,11 @@ class Labeler {
     }
     getComment(changedFiles) {
         const base = base_1.BASE_TEMPLATE.replace("{{labelsAddedCount}}", this.labelMatches.length.toString())
-            .replace("{{detectChanges}}", this.config.detectChanges === "gitlab-api" ? "Gitlab Api" : "local Git")
+            .replace("{{detectChanges}}", (0, get_config_1.getConfigByKey)("detectChanges") === "gitlab-api"
+            ? "Gitlab Api"
+            : "local Git")
             .replace("{{changedFilesCount}}", changedFiles.length.toString());
-        const changeEntries = this.labelMatches.map((labelMatch) => change_entry_1.CHANGE_ENTRY_TEMPLATE.replace("{{labelAdded}}", labelMatch.label).replace("{{changedFile}}", labelMatch.fileDir));
+        const changeEntries = this.labelMatches.map((labelMatch) => change_entry_1.CHANGE_ENTRY_TEMPLATE.replace("{{labelAdded}}", labelMatch.labels.join(", ")).replace("{{changedFile}}", labelMatch.fileDir));
         const listEntries = list_changes_1.LIST_CHANGES_TEMPLATE.replace("{{changes}}", changeEntries.join("\n"));
         if (this.labelMatches.length > 0) {
             return `
@@ -83,7 +86,7 @@ class Labeler {
         return base;
     }
     getChanges(offset = 0) {
-        if (this.config.detectChanges === "gitlab-api") {
+        if ((0, get_config_1.getConfigByKey)("detectChanges") === "gitlab-api") {
             const page = offset / exports.FILE_CHANGES_LIMIT + 1;
             return (0, fetch_changed_files_1.fetchChangedFiles)(page, exports.FILE_CHANGES_LIMIT);
         }

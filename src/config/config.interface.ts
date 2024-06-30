@@ -1,4 +1,4 @@
-export type DirectoriesLabelMapping = [RegExp, string];
+export type DirectoriesLabelMapping = { regExp: RegExp; labelsToAdd: string[] };
 
 export interface LabelerConfig {
   detectChanges?: "git" | "gitlab-api";

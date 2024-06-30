@@ -1,14 +1,14 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { getConfig } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-config";
 
 function getApiBaseUrl(): string {
-  return `${getConfig().gitlabServerProtocoll}://${
-    getConfig().gitlabServerHost
+  return `${getGitlabEnv().gitlabServerProtocoll}://${
+    getGitlabEnv().gitlabServerHost
   }/api/v4`;
 }
 
 const gitlabHeaders: AxiosRequestConfig["headers"] = {
-  "PRIVATE-TOKEN": getConfig().gitlabAccessToken,
+  "PRIVATE-TOKEN": getGitlabEnv().gitlabAccessToken,
 };
 
 export const gitlabApi = axios.create({

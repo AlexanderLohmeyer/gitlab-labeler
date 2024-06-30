@@ -1,10 +1,10 @@
-import { getConfig } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-config";
 import { gitlabApi } from "./main";
 
 export async function writeComment(comment: string) {
   return gitlabApi.post(
-    `/projects/${getConfig().mergeRequestProjectId}/merge_requests/${
-      getConfig().mergeRequestIID
+    `/projects/${getGitlabEnv().mergeRequestProjectId}/merge_requests/${
+      getGitlabEnv().mergeRequestIID
     }/notes`,
     { body: comment }
   );

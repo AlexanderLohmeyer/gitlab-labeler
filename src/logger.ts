@@ -1,4 +1,4 @@
-import { getConfig } from "./config/get-config";
+import { getConfigByKey } from "./config/get-config";
 
 interface Logger {
   log: (message: string, ...args: any[]) => void;
@@ -8,7 +8,7 @@ interface Logger {
 
 export const logger: Logger = {
   log: (message: string, ...args: any[]) => {
-    if (!getConfig().silence) {
+    if (!getConfigByKey("silence")) {
       console.log(`\x1b[32m${message}\x1b[0m`, ...args);
     }
   },

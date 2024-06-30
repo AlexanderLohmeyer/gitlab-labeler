@@ -1,9 +1,11 @@
 import { execSync } from "child_process";
-import { getConfig } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-config";
 
 export function getChangedFiles(): string[] {
   return execSync(
-    `git diff origin/${getConfig().mergeRequestTargetBranch} HEAD --name-only`
+    `git diff origin/${
+      getGitlabEnv().mergeRequestTargetBranch
+    } HEAD --name-only`
   )
     .toString()
     .split("\n");

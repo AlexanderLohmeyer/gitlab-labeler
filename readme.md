@@ -18,8 +18,8 @@ You can easily define label-directory Matches by creating file named`labeler.con
 module.exports = {
   directoriesLabels: [
     {
-      regExp: "\path\/to\/your\/directory\g",
-      label: [ "your-label" ],
+      regExp: "path/to/your/directoryg",
+      label: ["your-label"],
     },
     // Add more directory-label pairs as needed
   ],
@@ -33,6 +33,20 @@ npx gitlab-labeler
 ```
 
 ## Configuration
+
+Its also possible to define Env Variables, which are always priorized and overwrite config Properties from the File. Env variables are always prefixed LABELER\_ and in SNAKE_CASE.
+
+Here is an overview of all possible Configurations:
+
+| Env Variable               | Config Property   | default    | Description                                                                                                                                                    |
+| -------------------------- | ----------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GITLAB_ACCESS_TOKEN        | /                 | /          | (required) Access Token for Gitlab-Api access.                                                                                                                 |
+| LABELER_DIRECTORIES_LABELS | directoriesLabels | []         | n array of objects that define the mapping between directories and labels. Each object contains a regular expression (regExp) and an array of labels (labels). |
+| LABELER_WRITE_COMMENT      | writeComment      | true       | A boolean value that determines whether a comment should be written to the merge request in GitLab.                                                            |
+| LABELER_DETECT_CHANGES     | detectChanges     | gitlab-api | A string value that specifies the method used to detect changes in the merge request. It can be set to "gitlab-api" or "local-git".                            |
+|                            |                   |            |                                                                                                                                                                |
+
+NOTE: This script is made to be run in CI Context of Gitlab. It consumes some [Gitlab predefined Variables for Merge Requests](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html) and won't run without these. To test locally you have to define `CI_SERVER_HOST`, `CI_SERVER_PROTOCOL`, `CI_MERGE_REQUEST_TARGET_BRANCH_NAME`, `CI_MERGE_REQUEST_PROJECT_ID`, `CI_MERGE_REQUEST_IID` on your own.
 
 ## License
 

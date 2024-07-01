@@ -7,6 +7,7 @@ import {
   ChangedFilesResponse,
   fetchChangedFiles,
 } from "./gitlab-api/fetch-changed-files";
+import { fetchMrDetails } from "./gitlab-api/fetch-mr-details";
 import { writeComment } from "./gitlab-api/write-comment";
 import { logger } from "./logger";
 import { BASE_TEMPLATE } from "./md_templates/base";
@@ -24,6 +25,14 @@ export class Labeler {
     let labelsToApply: string[] = [];
     let isComplete = false;
     let files: string[] = [];
+
+    const alreadyAppliedLabels = await this.getMrLabels();
+    logger.log("Filtering for already applied labels...");
+    this.labels = this.filterAlreadyAppliedLabels(alreadyAppliedLabels);
+    if (this.labels.length === 0) {
+      logger.log("No labels to apply left.");
+      return;
+    }
 
     while (!isComplete) {
       const changesResponse = await this.getChanges(files.length);
@@ -107,6 +116,23 @@ export class Labeler {
     }
 
     return base;
+  }
+
+  filterAlreadyAppliedLabels(labels: string[]): DirectoriesLabelMapping[] {
+    return this.labels
+      .map((labelMap) => {
+        labelMap.labelsToAdd = labelMap.labelsToAdd.filter(
+          (label) => !labels.includes(label)
+        );
+
+        return labelMap;
+      })
+      .filter((labelMap) => labelMap?.labelsToAdd.length > 0);
+  }
+
+  async getMrLabels(): Promise<string[]> {
+    const mrDetails = await fetchMrDetails();
+    return mrDetails.labels;
   }
 
   private getChanges(offset = 0): Promise<ChangedFilesResponse> {

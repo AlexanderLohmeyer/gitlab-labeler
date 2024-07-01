@@ -15,6 +15,7 @@ const get_labels_to_assign_1 = require("./get-labels-to-assign");
 const get_changed_files_1 = require("./git/get-changed-files");
 const assign_labels_1 = require("./gitlab-api/assign-labels");
 const fetch_changed_files_1 = require("./gitlab-api/fetch-changed-files");
+const fetch_mr_details_1 = require("./gitlab-api/fetch-mr-details");
 const write_comment_1 = require("./gitlab-api/write-comment");
 const logger_1 = require("./logger");
 const base_1 = require("./md_templates/base");
@@ -31,6 +32,13 @@ class Labeler {
             let labelsToApply = [];
             let isComplete = false;
             let files = [];
+            const alreadyAppliedLabels = yield this.getMrLabels();
+            logger_1.logger.log("Filtering for already applied labels...");
+            this.labels = this.filterAlreadyAppliedLabels(alreadyAppliedLabels);
+            if (this.labels.length === 0) {
+                logger_1.logger.log("No labels to apply left.");
+                return;
+            }
             while (!isComplete) {
                 const changesResponse = yield this.getChanges(files.length);
                 if (changesResponse.files) {
@@ -84,6 +92,20 @@ class Labeler {
       `;
         }
         return base;
+    }
+    filterAlreadyAppliedLabels(labels) {
+        return this.labels
+            .map((labelMap) => {
+            labelMap.labelsToAdd = labelMap.labelsToAdd.filter((label) => !labels.includes(label));
+            return labelMap;
+        })
+            .filter((labelMap) => (labelMap === null || labelMap === void 0 ? void 0 : labelMap.labelsToAdd.length) > 0);
+    }
+    getMrLabels() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const mrDetails = yield (0, fetch_mr_details_1.fetchMrDetails)();
+            return mrDetails.labels;
+        });
     }
     getChanges(offset = 0) {
         if ((0, get_config_1.getConfigByKey)("detectChanges") === "gitlab-api") {

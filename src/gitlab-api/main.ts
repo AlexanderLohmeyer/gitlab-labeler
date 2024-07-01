@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { getGitlabEnv } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-gitlab-env";
 
 function getApiBaseUrl(): string {
   return `${getGitlabEnv().gitlabServerProtocoll}://${

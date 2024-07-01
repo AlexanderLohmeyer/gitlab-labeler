@@ -1,39 +1,13 @@
 import path from "path";
-import {
-  DirectoriesLabelMapping,
-  GitlabEnvVariables,
-  LabelerConfig,
-} from "./config.interface";
+import { DirectoriesLabelMapping, LabelerConfig } from "./config.interface";
 import { defaultConfig } from "./default-config";
-
-export function getGitlabEnv(): GitlabEnvVariables {
-  if (!process.env.GITLAB_ACCESS_TOKEN) {
-    throw new Error(
-      "Gitlab access token not set. Set GITLAB_ACCESS_TOKEN environment variable."
-    );
-  }
-
-  if (!process.env.CI_SERVER_HOST) {
-    throw new Error(
-      "Gitlab CI Environment variables not set. You propably tried to run this tool outside of Gitlab CI"
-    );
-  }
-  return {
-    gitlabAccessToken: process.env.GITLAB_ACCESS_TOKEN!,
-    gitlabServerHost: process.env.CI_SERVER_HOST!,
-    gitlabServerProtocoll: process.env.CI_SERVER_PROTOCOL!,
-    mergeRequestTargetBranch: process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME!,
-    mergeRequestProjectId: process.env.CI_MERGE_REQUEST_PROJECT_ID!,
-    mergeRequestIID: process.env.CI_MERGE_REQUEST_IID!,
-  };
-}
+import { GitlabEnvVariables } from "./gitlab-env.interface";
 
 const camelCaseToSnakeCase = (str: string) =>
   str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
-const configFromFile: LabelerConfig = require(path.resolve(
-  "./labeler-config.js"
-));
+const configFromFile: () => LabelerConfig = () =>
+  require(path.resolve("./labeler-config.js"));
 
 const getConfigPropFromEnv = (key: keyof LabelerConfig): any => {
   const value =
@@ -76,10 +50,6 @@ const getConfigPropFromEnv = (key: keyof LabelerConfig): any => {
   return output;
 };
 
-export const getConfigByKey = (key: keyof LabelerConfig) => {
-  return getConfigPropFromEnv(key) ?? configFromFile[key] ?? defaultConfig[key];
-};
-
 function stringToRegex(regexString: string) {
   const regexParts = regexString.match(/^\/(.*?)\/([gimsuy]*)$/);
 
@@ -89,3 +59,9 @@ function stringToRegex(regexString: string) {
 
   return new RegExp(regexParts[1], regexParts[2]);
 }
+
+export const getConfigByKey = (key: keyof LabelerConfig) => {
+  return (
+    getConfigPropFromEnv(key) ?? configFromFile()[key] ?? defaultConfig[key]
+  );
+};

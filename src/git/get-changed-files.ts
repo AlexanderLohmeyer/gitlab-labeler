@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { getGitlabEnv } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-gitlab-env";
 
 export function getChangedFiles(): string[] {
   return execSync(

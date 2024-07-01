@@ -6,14 +6,3 @@ export interface LabelerConfig {
   silence?: boolean;
   writeComment?: boolean;
 }
-
-export interface GitlabEnvVariables {
-  gitlabServerHost: string;
-  gitlabServerProtocoll: string;
-  gitlabAccessToken: string;
-  mergeRequestTargetBranch: string;
-  mergeRequestProjectId: string;
-  mergeRequestIID: string;
-}
-
-export type FullConfig = GitlabEnvVariables & LabelerConfig;

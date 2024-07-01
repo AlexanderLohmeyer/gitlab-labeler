@@ -1,4 +1,4 @@
-import { getGitlabEnv } from "../config/get-config";
+import { getGitlabEnv } from "../config/get-gitlab-env";
 import { gitlabApi } from "./main";
 
 export async function assignLabels(labels: string[]) {

@@ -1,7 +1,6 @@
 import path from "path";
 import { DirectoriesLabelMapping, LabelerConfig } from "./config.interface";
 import { defaultConfig } from "./default-config";
-import { logger } from "../logger";
 
 const camelCaseToSnakeCase = (str: string) =>
   str.replace(/([A-Z])/g, "_$1").toLowerCase();

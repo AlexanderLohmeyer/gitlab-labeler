@@ -7,7 +7,14 @@ exports.getConfigByKey = void 0;
 const path_1 = __importDefault(require("path"));
 const default_config_1 = require("./default-config");
 const camelCaseToSnakeCase = (str) => str.replace(/([A-Z])/g, "_$1").toLowerCase();
-const configFromFile = () => require(path_1.default.resolve("./labeler-config.js"));
+const configFromFile = () => {
+    let config = {};
+    try {
+        config = require(path_1.default.resolve("./labeler-config.js"));
+    }
+    catch (e) { }
+    return config;
+};
 const getConfigPropFromEnv = (key) => {
     const value = process.env[`LABELER_${camelCaseToSnakeCase(key).toUpperCase()}`];
     if (value === undefined) {

@@ -1,13 +1,19 @@
 import path from "path";
 import { DirectoriesLabelMapping, LabelerConfig } from "./config.interface";
 import { defaultConfig } from "./default-config";
-import { GitlabEnvVariables } from "./gitlab-env.interface";
+import { logger } from "../logger";
 
 const camelCaseToSnakeCase = (str: string) =>
   str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
-const configFromFile: () => LabelerConfig = () =>
-  require(path.resolve("./labeler-config.js"));
+const configFromFile: () => LabelerConfig = () => {
+  let config: LabelerConfig = {};
+  try {
+    config = require(path.resolve("./labeler-config.js"));
+  } catch (e) {}
+
+  return config;
+};
 
 const getConfigPropFromEnv = (key: keyof LabelerConfig): any => {
   const value =

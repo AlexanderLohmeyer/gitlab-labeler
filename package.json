@@ -1,6 +1,6 @@
 {
   "name": "gitlab-labeler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple cli tool that automatically labels merge requests in your GitLab repository.",
   "main": "dist/main.js",
   "bin": {

@@ -10,11 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.writeComment = void 0;
-const get_config_1 = require("../config/get-config");
+const get_gitlab_env_1 = require("../config/get-gitlab-env");
 const main_1 = require("./main");
 function writeComment(comment) {
     return __awaiter(this, void 0, void 0, function* () {
-        return main_1.gitlabApi.post(`/projects/${(0, get_config_1.getGitlabEnv)().mergeRequestProjectId}/merge_requests/${(0, get_config_1.getGitlabEnv)().mergeRequestIID}/notes`, { body: comment });
+        return main_1.gitlabApi.post(`/projects/${(0, get_gitlab_env_1.getGitlabEnv)().mergeRequestProjectId}/merge_requests/${(0, get_gitlab_env_1.getGitlabEnv)().mergeRequestIID}/notes`, { body: comment });
     });
 }
 exports.writeComment = writeComment;

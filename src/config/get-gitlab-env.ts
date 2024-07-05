@@ -1,9 +1,9 @@
 import { GitlabEnvVariables } from "./gitlab-env.interface";
 
 export function getGitlabEnv(): GitlabEnvVariables {
-  if (!process.env.GITLAB_ACCESS_TOKEN) {
+  if (!process.env.LABELER_ACCESS_TOKEN) {
     throw new Error(
-      "Gitlab access token not set. Set GITLAB_ACCESS_TOKEN environment variable."
+      "Gitlab access token not set. Set LABELER_ACCESS_TOKEN environment variable."
     );
   }
 
@@ -13,7 +13,8 @@ export function getGitlabEnv(): GitlabEnvVariables {
     );
   }
   return {
-    gitlabAccessToken: process.env.GITLAB_ACCESS_TOKEN!,
+    gitlabAccessToken:
+      process.env.LABELER_ACCESS_TOKEN! ?? process.env.GITLAB_ACCESS_TOKEN!,
     gitlabServerHost: process.env.CI_SERVER_HOST!,
     gitlabServerProtocoll: process.env.CI_SERVER_PROTOCOL!,
     mergeRequestTargetBranch: process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME!,

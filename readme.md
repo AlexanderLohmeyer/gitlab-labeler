@@ -7,7 +7,7 @@ A simple cli tool that automatically labels merge requests in your GitLab reposi
 To install the Gitlab Labeler, run the following command in your project directory:
 
 ```bash
-npm install gitlab-labeler
+npm install --save-dev gitlab-labeler
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ module.exports = {
   directoriesLabels: [
     {
       regExp: "path/to/your/directoryg",
-      label: ["your-label"],
+      labels: ["your-label"],
     },
     // Add more directory-label pairs as needed
   ],
@@ -40,7 +40,7 @@ Here is an overview of all possible Configurations:
 
 | Env Variable               | Config Property   | default    | Description                                                                                                                                                    |
 | -------------------------- | ----------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GITLAB_ACCESS_TOKEN        | /                 | /          | (required) Access Token for Gitlab-Api access.                                                                                                                 |
+| LABELER_ACCESS_TOKEN       | /                 | /          | (required) Access Token for Gitlab-Api access.                                                                                                                 |
 | LABELER_DIRECTORIES_LABELS | directoriesLabels | []         | n array of objects that define the mapping between directories and labels. Each object contains a regular expression (regExp) and an array of labels (labels). |
 | LABELER_WRITE_COMMENT      | writeComment      | true       | A boolean value that determines whether a comment should be written to the merge request in GitLab.                                                            |
 | LABELER_DETECT_CHANGES     | detectChanges     | gitlab-api | A string value that specifies the method used to detect changes in the merge request. It can be set to "gitlab-api" or "local-git".                            |

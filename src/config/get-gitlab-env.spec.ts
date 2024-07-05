@@ -4,7 +4,7 @@ describe("getGitlabEnv", () => {
   beforeEach(() => {
     jest.resetModules();
 
-    process.env.GITLAB_ACCESS_TOKEN = "my_access_token";
+    process.env.LABELER_ACCESS_TOKEN = "my_access_token";
     process.env.CI_SERVER_HOST = "my_server_host";
   });
 
@@ -21,17 +21,17 @@ describe("getGitlabEnv", () => {
     });
   });
 
-  it("throws an error when GITLAB_ACCESS_TOKEN is not set", () => {
-    delete process.env.GITLAB_ACCESS_TOKEN;
+  it("throws an error when LABELER_ACCESS_TOKEN is not set", () => {
+    delete process.env.LABELER_ACCESS_TOKEN;
     process.env.CI_SERVER_HOST = "my_server_host";
 
     expect(() => getGitlabEnv()).toThrow(
-      "Gitlab access token not set. Set GITLAB_ACCESS_TOKEN environment variable."
+      "Gitlab access token not set. Set LABELER_ACCESS_TOKEN environment variable."
     );
   });
 
   it("throws an error when CI_SERVER_HOST is not set", () => {
-    process.env.GITLAB_ACCESS_TOKEN = "my_access_token";
+    process.env.LABELER_ACCESS_TOKEN = "my_access_token";
     delete process.env.CI_SERVER_HOST;
 
     expect(() => getGitlabEnv()).toThrow(

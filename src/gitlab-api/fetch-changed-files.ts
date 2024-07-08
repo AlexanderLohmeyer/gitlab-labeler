@@ -9,6 +9,7 @@ type ListMergeRequestDiffsResponse = {
 export interface ChangedFilesResponse {
   files: string[];
   isComplete: boolean;
+  nextPage: number | undefined;
 }
 
 export async function fetchChangedFiles(
@@ -33,10 +34,12 @@ export async function fetchChangedFiles(
       : [data.old_path, data.new_path]
   );
 
-  const isComplete = !response.headers["x-next-page"]; // Gitlab returns empty string if no next page is available
+  const nextPage = response.headers["x-next-page"];
+  const isComplete = !nextPage;
 
   return {
     files,
     isComplete,
+    nextPage,
   };
 }

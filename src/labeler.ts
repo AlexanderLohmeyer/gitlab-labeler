@@ -24,6 +24,7 @@ export class Labeler {
   public async start(dryRun = false) {
     let labelsToApply: string[] = [];
     let isComplete = false;
+    let page = 1;
     let files: string[] = [];
 
     const alreadyAppliedLabels = await this.getMrLabels();
@@ -35,7 +36,7 @@ export class Labeler {
     }
 
     while (!isComplete) {
-      const changesResponse = await this.getChanges(files.length);
+      const changesResponse = await this.getChanges(page);
 
       if (changesResponse.files) {
         files = [...files, ...changesResponse.files];
@@ -60,6 +61,11 @@ export class Labeler {
       }
 
       isComplete = changesResponse.isComplete;
+      if (changesResponse.nextPage) {
+        page = changesResponse.nextPage;
+      } else {
+        page = page + 1;
+      }
     }
 
     if (labelsToApply.length > 0) {
@@ -135,14 +141,14 @@ export class Labeler {
     return mrDetails.labels;
   }
 
-  private getChanges(offset = 0): Promise<ChangedFilesResponse> {
+  private getChanges(page = 1): Promise<ChangedFilesResponse> {
     if (getConfigByKey("detectChanges") === "gitlab-api") {
-      const page = offset / FILE_CHANGES_LIMIT + 1;
       return fetchChangedFiles(page, FILE_CHANGES_LIMIT);
     } else {
       return Promise.resolve({
         files: getChangedFiles(),
         isComplete: true,
+        nextPage: undefined,
       });
     }
   }

@@ -31,6 +31,7 @@ class Labeler {
         return __awaiter(this, arguments, void 0, function* (dryRun = false) {
             let labelsToApply = [];
             let isComplete = false;
+            let page = 1;
             let files = [];
             const alreadyAppliedLabels = yield this.getMrLabels();
             logger_1.logger.log("Filtering for already applied labels...");
@@ -40,7 +41,7 @@ class Labeler {
                 return;
             }
             while (!isComplete) {
-                const changesResponse = yield this.getChanges(files.length);
+                const changesResponse = yield this.getChanges(page);
                 if (changesResponse.files) {
                     files = [...files, ...changesResponse.files];
                     const labelMatches = (0, get_labels_to_assign_1.getLabelsToAssign)(changesResponse.files, this.labels);
@@ -53,6 +54,12 @@ class Labeler {
                     ];
                 }
                 isComplete = changesResponse.isComplete;
+                if (changesResponse.nextPage) {
+                    page = changesResponse.nextPage;
+                }
+                else {
+                    page = page + 1;
+                }
             }
             if (labelsToApply.length > 0) {
                 labelsToApply = [...new Set(labelsToApply)];
@@ -107,15 +114,15 @@ class Labeler {
             return mrDetails.labels;
         });
     }
-    getChanges(offset = 0) {
+    getChanges(page = 1) {
         if ((0, get_config_1.getConfigByKey)("detectChanges") === "gitlab-api") {
-            const page = offset / exports.FILE_CHANGES_LIMIT + 1;
             return (0, fetch_changed_files_1.fetchChangedFiles)(page, exports.FILE_CHANGES_LIMIT);
         }
         else {
             return Promise.resolve({
                 files: (0, get_changed_files_1.getChangedFiles)(),
                 isComplete: true,
+                nextPage: undefined,
             });
         }
     }

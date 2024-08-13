@@ -1,6 +1,6 @@
 {
   "name": "gitlab-labeler",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A simple cli tool that automatically labels merge requests in your GitLab repository.",
   "main": "dist/main.js",
   "bin": {
@@ -12,7 +12,7 @@
   "author": "Alexander Lohmeyer",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "typescript": "^5.4.5",

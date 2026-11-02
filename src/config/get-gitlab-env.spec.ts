@@ -35,7 +35,7 @@ describe("getGitlabEnv", () => {
     delete process.env.CI_SERVER_HOST;
 
     expect(() => getGitlabEnv()).toThrow(
-      "Gitlab CI Environment variables not set. You propably tried to run this tool outside of Gitlab CI"
+      "Gitlab CI Environment variables not set. You probably tried to run this tool outside of Gitlab CI"
     );
   });
 });

@@ -9,12 +9,11 @@ export function getGitlabEnv(): GitlabEnvVariables {
 
   if (!process.env.CI_SERVER_HOST) {
     throw new Error(
-      "Gitlab CI Environment variables not set. You propably tried to run this tool outside of Gitlab CI"
+      "Gitlab CI Environment variables not set. You probably tried to run this tool outside of Gitlab CI"
     );
   }
   return {
-    gitlabAccessToken:
-      process.env.LABELER_ACCESS_TOKEN! ?? process.env.GITLAB_ACCESS_TOKEN!,
+    gitlabAccessToken: process.env.LABELER_ACCESS_TOKEN,
     gitlabServerHost: process.env.CI_SERVER_HOST!,
     gitlabServerProtocoll: process.env.CI_SERVER_PROTOCOL!,
     mergeRequestTargetBranch: process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME!,

@@ -68,7 +68,8 @@ class Labeler {
                 if ((0, get_config_1.getConfigByKey)("writeComment")) {
                     logger_1.logger.log("Writing Comment to Gitlab");
                     try {
-                        !dryRun && (yield (0, write_comment_1.writeComment)(this.getComment(files)));
+                        !dryRun &&
+                            (yield (0, write_comment_1.writeComment)(this.getComment(files, labelsToApply.length)));
                         logger_1.logger.log("Writing Comment succeeded");
                     }
                     catch (e) {
@@ -84,8 +85,8 @@ class Labeler {
             }
         });
     }
-    getComment(changedFiles) {
-        const base = base_1.BASE_TEMPLATE.replace("{{labelsAddedCount}}", this.labelMatches.length.toString())
+    getComment(changedFiles, labelsAddedCount) {
+        const base = base_1.BASE_TEMPLATE.replace("{{labelsAddedCount}}", labelsAddedCount.toString())
             .replace("{{detectChanges}}", (0, get_config_1.getConfigByKey)("detectChanges") === "gitlab-api"
             ? "Gitlab Api"
             : "local Git")

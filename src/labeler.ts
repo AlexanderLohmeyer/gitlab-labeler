@@ -76,7 +76,10 @@ export class Labeler {
       if (getConfigByKey("writeComment")) {
         logger.log("Writing Comment to Gitlab");
         try {
-          !dryRun && (await writeComment(this.getComment(files)));
+          !dryRun &&
+            (await writeComment(
+              this.getComment(files, labelsToApply.length)
+            ));
           logger.log("Writing Comment succeeded");
         } catch (e) {
           logger.error("Writing Comment failed", e);
@@ -89,10 +92,10 @@ export class Labeler {
     }
   }
 
-  private getComment(changedFiles: string[]): string {
+  private getComment(changedFiles: string[], labelsAddedCount: number): string {
     const base = BASE_TEMPLATE.replace(
       "{{labelsAddedCount}}",
-      this.labelMatches.length.toString()
+      labelsAddedCount.toString()
     )
       .replace(
         "{{detectChanges}}",

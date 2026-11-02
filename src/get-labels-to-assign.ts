@@ -13,7 +13,7 @@ export function getLabelsToAssign(
   const labelMatches = labelDirectories
     .map((testDir) => {
       const match = changes.find((changedFile) =>
-        testDir.regExp.test(changedFile)
+        matches(testDir.regExp, changedFile)
       );
       return match
         ? {
@@ -29,4 +29,11 @@ export function getLabelsToAssign(
     );
 
   return labelMatches;
+}
+
+// RegExp.test() with the g or y flag remembers the last position,
+// so it has to be reset, otherwise every second file would be skipped
+function matches(regExp: RegExp, value: string): boolean {
+  regExp.lastIndex = 0;
+  return regExp.test(value);
 }

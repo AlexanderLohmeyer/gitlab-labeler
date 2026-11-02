@@ -76,4 +76,15 @@ describe("getLabelsToAssign", () => {
       },
     ]);
   });
+
+  it("should match every file with a global regex", () => {
+    const regExp = /src\//g;
+    const labelDirectories: DirectoriesLabelMapping[] = [
+      { labelsToAdd: ["source"], regExp },
+    ];
+
+    expect(getLabelsToAssign(["src/a.ts"], labelDirectories)).toHaveLength(1);
+    expect(getLabelsToAssign(["src/b.ts"], labelDirectories)).toHaveLength(1);
+    expect(getLabelsToAssign(["src/c.ts"], labelDirectories)).toHaveLength(1);
+  });
 });

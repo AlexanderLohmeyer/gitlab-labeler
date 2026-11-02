@@ -25,8 +25,12 @@ function run() {
         }).argv;
         logger_1.logger.log(`─────────────────────Gitlab Labeler${argv["dry-run"] ? "(Dry-Run)" : ""}─────────────────────────`);
         const labeler = new labeler_1.Labeler((0, get_config_1.getConfigByKey)("directoriesLabels"));
-        labeler.start(argv["dry-run"]);
+        yield labeler.start(argv["dry-run"]);
     });
 }
 exports.run = run;
-run();
+run().catch((e) => {
+    var _a;
+    logger_1.logger.error("Gitlab Labeler failed", (_a = e === null || e === void 0 ? void 0 : e.message) !== null && _a !== void 0 ? _a : e);
+    process.exitCode = 1;
+});

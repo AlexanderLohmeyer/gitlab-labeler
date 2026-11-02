@@ -1,12 +1,16 @@
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { getGitlabEnv } from "../config/get-gitlab-env";
 
 export function getChangedFiles(): string[] {
-  return execSync(
-    `git diff origin/${
-      getGitlabEnv().mergeRequestTargetBranch
-    } HEAD --name-only`
-  )
+  const targetBranch = getGitlabEnv().mergeRequestTargetBranch;
+
+  // "..." compares against the merge base, so changes that only happened on the target branch are ignored
+  return execFileSync("git", [
+    "diff",
+    "--name-only",
+    `origin/${targetBranch}...HEAD`,
+  ])
     .toString()
-    .split("\n");
+    .split("\n")
+    .filter((file) => file.trim() !== "");
 }

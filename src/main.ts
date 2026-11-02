@@ -16,7 +16,10 @@ export async function run(): Promise<void> {
   );
 
   const labeler = new Labeler(getConfigByKey("directoriesLabels"));
-  labeler.start(argv["dry-run"] as boolean);
+  await labeler.start(argv["dry-run"] as boolean);
 }
 
-run();
+run().catch((e) => {
+  logger.error("Gitlab Labeler failed", e?.message ?? e);
+  process.exitCode = 1;
+});

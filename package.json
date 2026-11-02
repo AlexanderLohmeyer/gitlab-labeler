@@ -6,16 +6,18 @@
   "bin": {
     "gitlab-labeler": "dist/main.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "jest"
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build && npm test"
   },
   "author": "Alexander Lohmeyer",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.21.0",
-    "fs": "^0.0.1-security",
-    "path": "^0.12.7",
-    "typescript": "^5.4.5",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
@@ -26,6 +28,7 @@
     "globals": "^15.6.0",
     "jest": "^29.7.0",
     "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
     "typescript-eslint": "^7.14.1"
   },
   "repository": {

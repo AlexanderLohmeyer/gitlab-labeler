@@ -12,7 +12,7 @@
   "author": "Alexander Lohmeyer",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.4",
+    "axios": "^1.21.0",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "typescript": "^5.4.5",
